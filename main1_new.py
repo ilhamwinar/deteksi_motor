@@ -250,7 +250,7 @@ if __name__ == '__main__':
 
                             ## SAVE TO IMAGE DATASET
                             dir_pict_dataset=str(cur_dir)+"/image_dataset/IMG"+"_"+input_titik+"_"+file_name+".jpg"
-                            cv2.imwrite(dir_pict_org, frame_main)
+                            cv2.imwrite(dir_pict_dataset, frame_main)
                             
 
 
@@ -356,7 +356,7 @@ if __name__ == '__main__':
 
                             ## SAVE TO IMAGE DATASET
                             dir_pict_dataset=str(cur_dir)+"/image_dataset/IMG"+"_"+input_titik+"_"+file_name+".jpg"
-                            cv2.imwrite(dir_pict_org, frame_main)
+                            cv2.imwrite(dir_pict_dataset, frame_main)
                             
                             #cv2.imwrite(dir_pict_org, frame_main)
                             
