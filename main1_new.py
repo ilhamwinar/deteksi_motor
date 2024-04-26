@@ -134,6 +134,8 @@ def play_sound():
         pass
 
 ## -----------------------------------------MAIN PROGRAM -------------------------------------------------
+sebelum_hour=datetime.now().hour
+
 
 if __name__ == '__main__':
 
@@ -152,6 +154,12 @@ if __name__ == '__main__':
         get_fps_bis = True
         
         while cap.isOpened():
+            now_hour = datetime.now().hour
+            
+            if now_hour != sebelum_hour:
+                write_log(input_titik,"PROGRAM RUNNING SETIAP JAM "+str(now_hour))
+            
+            sebelum_hour=now_hour
             success, frame_main = cap.read()
             if success:
                 sound_thread = threading.Thread(target=play_sound)
