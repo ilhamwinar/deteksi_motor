@@ -298,11 +298,12 @@ if __name__ == '__main__':
                                 cursor.execute(sql_insert,query_insert)
                                 cnx.commit()
                                 write_log(input_titik,"SUCCESSED INSERTING TO MYSQL")
+                                cnx.close()
                             except:
                                 write_log_error(input_titik,"NOT INSERTED TO DATABASE")
                                 pass
                             
-                            cnx.close()
+                            
 
                         if int(time.time() - start_time_bis) > DELAY_DETECTION:
                             flag_bis=1
@@ -410,11 +411,12 @@ if __name__ == '__main__':
                                 cursor.execute(sql_insert,query_insert)
                                 cnx.commit()
                                 write_log(input_titik,"SUCCESSED INSERTING TO MYSQL")
+                                cnx.close()
                             except:
                                 write_log_error(input_titik,"NOT INSERTED TO DATABASE")
                                 pass
                             
-                            cnx.close()
+                            
 
                             write_log(input_titik,"END TO INSERT MYSQL")
 
