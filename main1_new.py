@@ -143,7 +143,7 @@ if __name__ == '__main__':
         flag_bis=1
 
         write_log(input_titik,"START PROGRAM CCTV SURVAILANCE MOTOR")
-        write_log(input_titik,database_db)
+        #write_log(input_titik,database_db)
         ## Inisialisasi cctv
         cap = cv2.VideoCapture(RTSP_CCTV)
         cur_dir = os.getcwd()
@@ -155,7 +155,10 @@ if __name__ == '__main__':
             success, frame_main = cap.read()
             if success:
                 sound_thread = threading.Thread(target=play_sound)
+
                 masking_frame=frame_main.copy()
+                frame_dataset=frame_main.copy()
+                frame_main2=frame_main.copy()
                 
                 ## Resize File save to 640,480
                 save_vid=frame_main.copy()
@@ -169,8 +172,8 @@ if __name__ == '__main__':
                     pass
 
                 ## TAMPILAN UI
-                cv2.imshow('CAM masking', masking_frame)
-                cv2.imshow('CAM LIVE', frame_main)
+                # cv2.imshow('CAM masking', masking_frame)
+                # cv2.imshow('CAM LIVE', frame_main)
                 #logging.info("LIVE")
                 
                 ## mode max detection banyak
@@ -197,7 +200,7 @@ if __name__ == '__main__':
                         print(str(xyxy[0]))
                         # print(type(xyxy[0]))
                         write_log(input_titik,"ADA DETEKSI")
-                        frame_kotak = cv2.rectangle(frame_main, (int(xyxy[0][0]), int(xyxy[0][1])), (int(xyxy[0][2]), int(xyxy[0][3])), (255,255,255), 1)
+                        frame_kotak = cv2.rectangle(frame_main2, (int(xyxy[0][0]), int(xyxy[0][1])), (int(xyxy[0][2]), int(xyxy[0][3])), (255,255,255), 1)
                         frame_kotak = cv2.putText(frame_kotak,str(conf)+" - "+str(name_clas),(int(xyxy[0][0]), int(xyxy[0][1]) - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.15, (255,255,255), 1, cv2.LINE_AA)
 
                     bus=1
@@ -250,7 +253,7 @@ if __name__ == '__main__':
 
                             ## SAVE TO IMAGE DATASET
                             dir_pict_dataset=str(cur_dir)+"/image_dataset/IMG"+"_"+input_titik+"_"+file_name+".jpg"
-                            cv2.imwrite(dir_pict_dataset, frame_main)
+                            cv2.imwrite(dir_pict_dataset, frame_dataset)
                             
 
 
@@ -340,7 +343,7 @@ if __name__ == '__main__':
                             ## KOTAK SAVED PREDICT MOTOR
                             # result_cam=model.predict(frame_main, conf=0.6,verbose=False)
                             # frame_kotak= result_cam[0].plot(line_width=1, labels=True, conf=True)
-                            cv2.imwrite(dir_pict_org, frame_kotak)
+                            #cv2.imwrite(dir_pict_org, frame_kotak)
 
                             ##save pict folder
                             dirpathlog = f"image_storage/{input_titik}/{waktufile}"
@@ -355,8 +358,12 @@ if __name__ == '__main__':
                             # cv2.imwrite(dir_pict_org, frame_kotak)
 
                             ## SAVE TO IMAGE DATASET
+                            # dir_pict_dataset=str(cur_dir)+"/image_dataset/IMG"+"_"+input_titik+"_"+file_name+".jpg"
+                            # cv2.imwrite(dir_pict_dataset, frame_main)
+
+                            ## SAVE TO IMAGE DATASET
                             dir_pict_dataset=str(cur_dir)+"/image_dataset/IMG"+"_"+input_titik+"_"+file_name+".jpg"
-                            cv2.imwrite(dir_pict_dataset, frame_main)
+                            cv2.imwrite(dir_pict_dataset, frame_dataset)
                             
                             #cv2.imwrite(dir_pict_org, frame_main)
                             
@@ -509,11 +516,24 @@ if __name__ == '__main__':
 
                 if cv2.waitKey(1) & 0xFF == ord("q"):
                     break
-            else:
-                write_log_error(input_titik,"OUT AI PROGRAM")
-                break
 
+            if not success:
+                write_log_error("DEV JMTO","FRAME 1 ERROR CANNOT GET FRAME")
+                write_log_error("DEV JMTO","PYTHON CRASHED")
+                pid = os.getpid()
+                write_log_error("DEV JMTO","PID: "+str(pid))
+                break
 
         cap.release()
         cv2.destroyAllWindows()
+        
+        try:
+            write_log_error("DEV JMTO","FORCED CLOSE APP")
+            os.kill(pid, 9)
+            write_log_error("DEV JMTO","PID KILL: "+str(pid))
+        except:
+            pid = os.getpid()
+            write_log_error("DEV JMTO","PID: "+str(pid))
+            os.kill(pid, 9)
+            write_log_error("DEV JMTO","PID KILL: "+str(pid))
         
