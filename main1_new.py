@@ -528,22 +528,22 @@ if __name__ == '__main__':
                     break
 
             if not success:
-                write_log_error("DEV JMTO","FRAME 1 ERROR CANNOT GET FRAME")
-                write_log_error("DEV JMTO","PYTHON CRASHED")
+                write_log_error(input_titik,"FRAME 1 ERROR CANNOT GET FRAME")
+                write_log_error(input_titik,"PYTHON CRASHED")
                 pid = os.getpid()
-                write_log_error("DEV JMTO","PID: "+str(pid))
+                write_log_error(input_titik,"PID: "+str(pid))
                 break
 
         cap.release()
         cv2.destroyAllWindows()
         
         try:
-            write_log_error("DEV JMTO","FORCED CLOSE APP")
+            write_log_error(input_titik,"FORCED CLOSE APP")
             os.kill(pid, 9)
-            write_log_error("DEV JMTO","PID KILL: "+str(pid))
+            write_log_error(input_titik,"PID KILL: "+str(pid))
         except:
             pid = os.getpid()
-            write_log_error("DEV JMTO","PID: "+str(pid))
+            write_log_error(input_titik,"PID: "+str(pid))
             os.kill(pid, 9)
-            write_log_error("DEV JMTO","PID KILL: "+str(pid))
+            write_log_error(input_titik,"PID KILL: "+str(pid))
         
