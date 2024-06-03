@@ -70,7 +70,10 @@ user_db = os.getenv("USER_DB", "aicctv")
 password_db = os.getenv("PASSWORD_DB", "jmt02022!")
 host_db  = os.getenv("HOST_DB", "127.0.0.1")
 database_db  = os.getenv("DATABASE", "deteksi_motor")
-database_db = database_db+"_0"+input_titik
+if int(input_titik) < 10:
+    database_db = database_db+"_0"+str(input_titik)
+elif int(input_titik) >= 10:
+    database_db = database_db+"_"+str(input_titik)
 
 ##--------------------------------------------------------------------------------------------------
 
