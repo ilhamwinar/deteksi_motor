@@ -225,7 +225,7 @@ if __name__ == '__main__':
 
                         if flag_bis==1 and id_box_bis!= temp_id_bis:
                             write_log(input_titik,"ADA DETEKSI SEPEDA")
-
+			    sound_thread.start()
 
                             start_time_bis = time.time()
                             flag_bis=0
