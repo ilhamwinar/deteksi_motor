@@ -97,6 +97,7 @@ if response_code==200:
     input_titik= response["id_cctv"]
     RTSP_CCTV=response["rtsp"]
     DELAY_DETECTION=response["delay"]
+    DELAY_DETECTION=int(DELAY_DETECTION)
     masking=response["masking"]
     endpoint=response["endpoint"]
     model=response["model"]
@@ -114,12 +115,21 @@ elif response_code==500:
         cursor.execute(query, (location,))
         result_query = cursor.fetchall()    
         write_log(location,"OUTPUT QUERY RESULT: "+str(result_query)) 
-        input_titik= response["id_cctv"]
-        RTSP_CCTV=response["rtsp"]
-        DELAY_DETECTION=response["delay"]
-        masking=response["masking"]
-        endpoint=response["endpoint"]
-        model=response["model"]
+
+        input_titik=result_query[0][0]
+        RTSP_CCTV=result_query[0][1]
+        DELAY_DETECTION=result_query[0][2]
+        DELAY_DETECTION=int(DELAY_DETECTION)
+        masking=result_query[0][3]
+        endpoint=result_query[0][4]
+        model=result_query[0][5]
+        # input_titik= response["id_cctv"]
+        # RTSP_CCTV=response["rtsp"]
+        # DELAY_DETECTION=response["delay"]
+        # DELAY_DETECTION=int(DELAY_DETECTION)
+        # masking=response["masking"]
+        # endpoint=response["endpoint"]
+        # model=response["model"]
         write_log(location,"SUCCESSED PARSING DATA AND GET FROM DB LOCAL SERVER") 
     except:
         write_log_error(location,"FAILED TO GET DATA MOTOR CONFIG AT LOCAL SERVER ")
@@ -129,7 +139,7 @@ elif response_code==500:
 
 # ERROR HANDLING RTSP
 if "null" in RTSP_CCTV:
-    RTSP_CCTV= args["rtsp"]
+    RTSP_CCTV= RTSP_CCTV
 
 ## Masking
 try:
@@ -178,6 +188,12 @@ def play_sound():
         pass
 
 def post_to_dev(id_cctv,url_image,url_video,class_detection,detection_object,waktu_deteksi):
+    #GET PARAMETER 
+    # m = MultipartEncoder(fields={'location': str(location)})
+
+    # # Define the URL for the API endpoint
+    # url = "http://127.0.0.1:8200/get_motor_config"
+    # response = requests.post(url, data=m,headers={'Content-Type': m.content_type}).json()
     url = 'http://175.10.1.101:8083/api/create-event/motor'
     id_cctv=str(id_cctv)
     url_image=str(url_image)
@@ -217,6 +233,7 @@ if __name__ == '__main__':
 
         write_log(location,"START PROGRAM CCTV SURVAILANCE MOTOR V2 FROM API")
         ## Inisialisasi cctv
+        write_log(location,RTSP_CCTV)
         cap = cv2.VideoCapture(RTSP_CCTV)
         cur_dir = os.getcwd()
         model=YOLO(model)
@@ -333,13 +350,13 @@ if __name__ == '__main__':
                             
                             try:
                                 #cursor=cnx.cursor()
-                                write_log(location,"START INSERTING TO MOTOR EVENT LOCAL SERVER")
+                                write_log(location,"START INSERTING TO MOTOR EVENT LOCAL SERVER (SEPEDA)")
                                 cursor.execute(sql_insert,query_insert)
                                 cnx.commit()
-                                write_log(location,"SUCCESSED INSERTING TO MOTOR EVENT LOCAL SERVER")
+                                write_log(location,"SUCCESSED INSERTING TO MOTOR EVENT LOCAL SERVER (SEPEDA)")
                                 # cnx.close()
                             except:
-                                write_log_error(location,"NOT INSERTED TO TO MOTOR EVENT LOCAL SERVER")
+                                write_log_error(location,"NOT INSERTED TO TO MOTOR EVENT LOCAL SERVER (SEPEDA)")
                                 pass
                             
                         if int(time.time() - start_time_bis) > DELAY_DETECTION:
@@ -395,7 +412,7 @@ if __name__ == '__main__':
                             os.makedirs(dirpathlog, exist_ok=True)
                             dir_pict_org=str(cur_dir)+"/"+dirpathlog+"/IMG"+"_"+input_titik+"_"+file_name+".jpg"
                             cv2.imwrite(dir_pict_org, frame_kotak)
-                            write_log(location,"PICTURE MOTOR CAPTURED AS DETECTION")
+                            write_log(location,"PICTURE MOTOR CAPTURED AS DETECTION (MOTOR)")
 
                             ## KOTAK SAVED PREDICT MOTOR
                             # result_cam=model.predict(frame_main, conf=0.6,verbose=False)
@@ -409,7 +426,7 @@ if __name__ == '__main__':
                             ## SAVE TO IMAGE DATASET
                             dir_pict_dataset=str(cur_dir)+"/image_dataset/IMG"+"_"+input_titik+"_"+file_name+".jpg"
                             cv2.imwrite(dir_pict_dataset, frame_dataset)
-                            write_log(location,"PICTURE MOTOR CAPTURED AS DATASET")
+                            write_log(location,"PICTURE MOTOR CAPTURED AS DATASET (MOTOR)")
                             
                             ## Inisialisasi mysql
                             # try:
@@ -485,7 +502,7 @@ if __name__ == '__main__':
 
                             ## bener
                             vid_writer = cv2.VideoWriter(dir_vid_org, cv2.VideoWriter_fourcc('D','I','V','X'), fps, (w, h))
-                            write_log(location,dir_vid_org)
+                            #write_log(location,dir_vid_org)
 
                             write_log(location,"GET RECORDING FRAME MOTOR")
                             
@@ -529,7 +546,7 @@ if __name__ == '__main__':
                             #dir_vid_org="./video_mp4/VID"+"_"+str(input_titik)+"_"+file_name+".mp4"
                             
                             dir_vid_org="./"+dirvidlog+"/VID"+"_"+str(input_titik)+"_"+file_name+".mp4"
-                            write_log(location,dir_vid_org)
+                            #write_log(location,dir_vid_org)
 
                             ## bener
                             vid_writer_bis = cv2.VideoWriter(dir_vid_org, cv2.VideoWriter_fourcc('D','I','V','X'), fps, (w, h))
