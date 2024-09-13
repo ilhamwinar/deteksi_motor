@@ -85,13 +85,15 @@ else:
 #GET PARAMETER 
 m = MultipartEncoder(fields={'location': str(location)})
 
-# Define the URL for the API endpoint
-url = "http://127.0.0.1:8200/get_motor_config"
-response = requests.post(url, data=m,headers={'Content-Type': m.content_type}).json()
+try:
+    url = "http://127.0.0.1:8200/get_motor_config"
+    response = requests.post(url, data=m,headers={'Content-Type': m.content_type}).json()
+    response_code=response["status"]
+except:
+    response_code=500
+    pass
 
 ##--------------------------------------------------------------------------------------------------##
-response_code=response["status"]
-
 if response_code==200:
     write_log(location,"SUCCESSED GET DATA TO API INTAN SERVER ")
     input_titik= response["id_cctv"]
@@ -194,7 +196,7 @@ def post_to_dev(id_cctv,url_image,url_video,class_detection,detection_object,wak
     # # Define the URL for the API endpoint
     # url = "http://127.0.0.1:8200/get_motor_config"
     # response = requests.post(url, data=m,headers={'Content-Type': m.content_type}).json()
-    url = 'http://175.10.1.101:8083/api/create-event/motor'
+    url = 'http://175.10.1.14:8083/api/create-event/motor'
     id_cctv=str(id_cctv)
     url_image=str(url_image)
     url_video=str(url_video)
@@ -346,7 +348,11 @@ if __name__ == '__main__':
                             query_insert=(input_titik,dir_pict_org,dir_vid_org,"Sepeda/Motor",ntp_count,waktu_deteksi)
 
                             #POST TO DEV
-                            post_to_dev(input_titik,dir_pict_org,dir_vid_org,"Sepeda/Motor",ntp_count,formatted_datetime)
+                            try:
+                                post_to_dev(location,dir_pict_org,dir_vid_org,"Sepeda/Motor",ntp_count,formatted_datetime)
+                            except:
+                                write_log_error(location,"NOT CONNECT AND FAILED TO INSERT TO DEV SERVER")
+                                break
                             
                             try:
                                 #cursor=cnx.cursor()
@@ -456,7 +462,11 @@ if __name__ == '__main__':
                             query_insert=(input_titik,dir_pict_org,dir_vid_org,"Sepeda/Motor",ntp_count,waktu_deteksi)
 
                             #POST TO DEV
-                            post_to_dev(input_titik,dir_pict_org,dir_vid_org,"Sepeda/Motor",ntp_count,formatted_datetime)
+                            try:
+                                post_to_dev(location,dir_pict_org,dir_vid_org,"Sepeda/Motor",ntp_count,formatted_datetime)
+                            except:
+                                write_log_error(location,"NOT CONNECT AND FAILED TO INSERT TO DEV SERVER")
+                                break
 
                             try:
                                 #cursor=cnx.cursor()
